@@ -1,0 +1,183 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+
+<div class="page-header d-md-flex justify-content-between">
+    <div>
+        <h3>Users</h3>
+        <nav aria-label="breadcrumb" class="d-flex align-items-start">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-action="index" asp-controller="home">Items Management</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="mt-2 mt-md-0">
+        @*<a href="#" class="btn btn-success" data-toggle="modal" data-target="#mdlNew" title="Add new item">Add new item</a>*@
+        <a asp-action="create" asp-controller="home" class=" nav-link btn btn-success"  title="Add new item">Add new item</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="user-list" class="table table-lg">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Size</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model)
+                            {
+                                var photopath = "~/images/" + (product.PhotoPath ?? "man_avatar3.jpg");
+                                <tr>
+                                    <td>@product.Id</td>
+                                    <td>
+                                        <a href="#">
+                                            <figure class="avatar avatar-sm mr-2">
+                                                <img src="@photopath" asp-append-version="true"
+                                                     class="rounded-circle" alt="avatar">
+                                            </figure>
+                                            @product.Name
+                                        </a>
+                                    </td>
+                                    <td>@product.Price BHD</td>
+                                    <td>
+                                        @product.Size
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="dropdown">
+                                            <a href="#" data-toggle="dropdown"
+                                               class="btn btn-floating"
+                                               aria-haspopup="true" aria-expanded="false">
+                                                <i class="ti-more-alt"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                @*<a href="#" class="dropdown-item text-success">Edit</a>*@
+                                                <a asp-action="Edit" asp-controller="home" asp-route-id="@product.Id" class="nav-link dropdown-item text-success">Edit</a>
+                                                @*<a href="#" class="dropdown-item text-danger">Delete</a>*@
+                                            <a asp-action="Delete" asp-controller="home" asp-route-id="@product.Id" class=" nav-link dropdown-item text-danger">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="mdlNew" class="modal fade modal-item" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Add new item</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="ti-close"></i>
+                </button>
+            </div>
+            <div>
+                <div id="frmItem">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Item Name</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Size</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Picture</label>
+                                        <input type="file" palceholder="Select image" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" for="sizes">
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label>Size</label>
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                @*<div class="col-5">
+                                    <div class="form-group">
+                                        <label>Price</label>
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                </div>*@
+                                <div class="col-2">
+                                    <div class="form-group" style="margin-top: 27%;">
+                                        <a href="Javascript:void(0);" class="btn btn-success add-size">Add</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form >
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    Close
+                                </button>
+                                <button asp-controller="Home" asp-action="Create" method="post" type="submit" id="btnSave" class="btn btn-primary" title="Save">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).on('click', '.add-size', function () {
+            var size = $('div[for="sizes"]:first').clone();
+
+            size.find('.add-size').addClass('remove-size');
+            size.find('.add-size').addClass('btn-danger');
+            size.find('.add-size').text('Remove');
+            size.find('.add-size').removeClass('add-size');
+            $('#frmItem .modal-body').append(size);
+        });
+
+        $(document).on('click', '.remove-size', function () {
+            $(this).closest('div[for="sizes"]').remove();
+        });
+</script>
+}
